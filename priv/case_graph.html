@@ -1,0 +1,77 @@
+<script type="text/javascript" src="../../../jquery.flot.min.js"></script>
+<script type="text/javascript" src="../../../jquery.flot.axislabels.js"></script>
+<script type="text/javascript">
+var gid = 100;
+function ShowGraph(obj)
+{
+    var c = obj.textContent;
+    var i = c.indexOf('{');
+    if (i < 0) return;
+    var x = $.parseJSON(c.substr(i, c.length - i - 1));
+    var id = "gxxxx" + gid;
+    gid++;
+    var node= document.createElement("DIV");
+    node.id = id;
+    obj.parentNode.insertBefore(node, obj);
+    obj.parentNode.removeChild(obj);
+    var container = $('#' + id);
+    container.width("90%");
+    container.height(320);
+    
+    container.append('<div style="text-align:center;width:80%"><b>' + x.title + "</b></div>"); 
+    container.append('<div style="display:inline-block;width:80%;height:100%" id="' + id + id + '"></div>');
+    container.append('<div style="display:inline-block;height:100%" id="legend_' + id + id + '"></div>');
+    var g = $('#' + id + id);
+    var legendId = '#legend_' + id + id;
+    var legendDom = $(legendId);
+    var col = 1;
+    if (x.series.length > 0)
+    {
+      if (x.series[0].constructor == Object)
+        col = Math.floor((x.series.length + 8)/ 9);
+    }
+    $.plot(g, x.series, 
+       {
+            xaxis: { axisLabel: x.xaxis}, 
+            yaxis: { axisLabel: x.yaxis},
+            series: {
+                lines: { show: true },
+                points: { show: true }
+            },
+            legend: {
+                noColumns: col,
+                container: legendDom
+            },
+            grid: { hoverable: true, clickable: true }
+       }
+    );
+    $(legendId + ' table').css('border','none');
+    $(legendId + ' table td').css('border','none');
+    $(legendId + ' table th').css('border','none');
+
+    g.bind("plothover", function (event, pos, item) {
+				if (item) {
+					var x = item.datapoint[0].toFixed(2),
+						y = item.datapoint[1].toFixed(2);
+
+					$("#tooltip").html("(" + x + ", " + y + ")")
+						.css({top: item.pageY+5, left: item.pageX+5})
+						.fadeIn(200);
+				} else {
+					$("#tooltip").hide();
+				}
+        });
+}
+$(function() {
+        $("<div id='tooltip'></div>").css({
+                    position: "absolute",
+                    display: "none",
+                    border: "1px solid #fdd",
+                    padding: "2px",
+                    "background-color": "#fee",
+                    opacity: 0.80
+                }).appendTo("body");
+        var objs = $('div.chart');
+        for (var i = 0; i < objs.length; i ++) ShowGraph(objs[i]);
+	});
+</script>

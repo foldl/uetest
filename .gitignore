@@ -1,0 +1,14 @@
+.eunit
+deps
+*.o
+*.beam
+*.plt
+*.swp
+*.tmp
+erl_crash.dump
+ebin
+doc
+rel/example_project
+.concrete/DEV_MODE
+.rebar
+.svn
